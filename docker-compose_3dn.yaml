@@ -1,0 +1,84 @@
+# 1 NameNode, 3 DataNode for replication
+services:
+  namenode:
+    image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8  # Используемый образ
+    container_name: namenode  # Имя контейнера
+    restart: always  # Автоматический перезапуск при падении
+    ports:
+      - 9870:9870  # Порт веб-интерфейса HDFS
+      - 9000:9000  # Порт RPC для взаимодействия с DataNode
+    volumes:
+      - hadoop_namenode:/hadoop/dfs/name  # Том для хранения метаданных HDFS
+      - ./podcasts.csv:/podcasts.csv 
+    environment:
+      - CLUSTER_NAME=test  # Имя кластера
+    env_file:
+      - ./hadoop.env  # Файл с переменными окружения, в него добавили ограничение по размеру блоков HDFS_CONF_dfs_blocksize=67108864  # 64MB в байтах
+    deploy:
+      resources:
+        limits:
+          memory: 512M    # ограничиваем используемую память, максимум 512M
+
+  datanode1:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    container_name: datanode1
+    restart: always
+    volumes:
+      - hadoop_datanode1:/hadoop/dfs/data  # Том для хранения данных HDFS
+    environment:
+      SERVICE_PRECONDITION: "namenode:9870"  # Ожидает запуска NameNode перед стартом
+    env_file:
+      - ./hadoop.env
+    deploy:
+      resources:
+        limits:
+          memory: 512M    # Максимум 512M
+
+  datanode2:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    container_name: datanode2
+    restart: always
+    volumes:
+      - hadoop_datanode2:/hadoop/dfs/data  # Том для хранения данных HDFS
+    environment:
+      SERVICE_PRECONDITION: "namenode:9870"  # Ожидает запуска NameNode перед стартом
+    env_file:
+      - ./hadoop.env
+    deploy:
+      resources:
+        limits:
+          memory: 512M    # Максимум 512M
+
+  datanode3:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    container_name: datanode3
+    restart: always
+    volumes:
+      - hadoop_datanode3:/hadoop/dfs/data  # Том для хранения данных HDFS
+    environment:
+      SERVICE_PRECONDITION: "namenode:9870"  # Ожидает запуска NameNode перед стартом
+    env_file:
+      - ./hadoop.env
+    deploy:
+      resources:
+        limits:
+          memory: 512M    # Максимум 512M
+
+  spark:
+    image: bitnami/spark:latest  # Используем образ Spark
+    container_name: spark
+    depends_on:
+      - namenode  # Ожидает, пока NameNode будет готов
+    volumes:
+      - ./podcasts.csv:/podcasts.csv  # Делаем доступным podcasts.csv в контейнере
+      - ./Spark_application.py:/app/Spark_application.py  # Монтируем скрипт с задачей
+    environment:
+      - SPARK_MASTER=spark://spark:7077  # Указываем Spark master
+    entrypoint: ["/bin/bash", "-c", "while :; do sleep 1000; done"]  # Просто держим контейнер в живых
+    
+
+volumes:
+  hadoop_namenode:  # Том для NameNode
+  hadoop_datanode1:  # Том для DataNode
+  hadoop_datanode2:  
+  hadoop_datanode3:  

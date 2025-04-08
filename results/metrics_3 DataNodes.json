@@ -1,0 +1,7 @@
+{
+  "cluster": "3 DataNodes",
+  "optimized": false,
+  "runtime_sec": 10.79,
+  "mem_used": "5.855MiB",
+  "timestamp": "Tue Apr  8 23:32:03 2025"
+}
