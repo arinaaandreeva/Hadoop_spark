@@ -1,10 +1,10 @@
 # Hadoop Spark
-## To run
+## 
 **Spark Application**
    
     python runner.py
     
-**Visualization**   
+**Визуализация**   
     
     streamlit run streamlit_app.py  
 
@@ -23,18 +23,19 @@
      ├── results                     # results for each experiment
      |   ├── metrics_1 DataNode.json 
      |   ├── ....
-     ├── img                         # screenshots with results
+     ├── img                         # dashboard with results
 
 
 ### Cluster running
-Can check blocksize
-Replication =  3 is default ( if HDFS_CONF_dfs_replication=1 id not set) . Id DataNode is one then replication = 1.
+Можно проверить blocksize
+
+Replication =  3 по умолчанию (если HDFS_CONF_dfs_replication=1 не установлено) . Если DataNode одна, то replication = 1.
 ![alt text](https://github.com/arinaaandreeva/Hadoop_spark/blob/master/img/Utilities.JPG)
 
 
 ### Dashboard with results
- - Several datanodes make it possible not to lose data in the event of a breakdown of one of them, since we have replicas.
- - Optimized application is faster
+ - Несколько datanode позволяют не терять данные в случае поломки одного из них, так как у нас есть реплики.
+ - Оптимизированное приложение работает быстрее, но использует больше ресурсов из-за replication, cach.
 
 ![alt text](https://github.com/arinaaandreeva/Hadoop_spark/blob/master/img/Streamlit1.JPG)
 ![alt text](https://github.com/arinaaandreeva/Hadoop_spark/blob/master/img/Streamlit2.JPG)
